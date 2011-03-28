@@ -211,6 +211,17 @@ protocode(unknown_role) -> 3.
 
 params(<<>>) ->
     [];
+    
+%    
+% Crazy params: key length > 127
+%params(<<128,KLen:24,128,VLen:24,Key:KLen/binary,Value:VLen/binary, Rest/binary>>) ->
+%    [{list_to_atom(binary_to_list(Key)), binary_to_list(Value)} | params(Rest)];
+%params(<<128,KLen:24,VLen:8,Key:KLen/binary,Value:VLen/binary, Rest/binary>>) ->
+%    [{list_to_atom(binary_to_list(Key)), binary_to_list(Value)} | params(Rest)];
+
+params(<<KLen:8,128,VLen:24,Key:KLen/binary,Value:VLen/binary, Rest/binary>>) ->
+    [{list_to_atom(binary_to_list(Key)), binary_to_list(Value)} | params(Rest)];
+    
 params(<<KLen:8,VLen:8,Key:KLen/binary,Value:VLen/binary, Rest/binary>>) ->
     [{list_to_atom(binary_to_list(Key)), binary_to_list(Value)} | params(Rest)].
 
